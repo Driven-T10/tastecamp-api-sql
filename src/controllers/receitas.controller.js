@@ -12,8 +12,14 @@ export async function getReceitas(req, res) {
 
 export async function getReceitaById(req, res) {
     const { id } = req.params
+
     try {
-        const receita = await db.query(`SELECT * FROM receitas WHERE id=$1;`, [id])
+        const receita = await db.query(`
+            SELECT receitas.*, categorias.nome AS categoria 
+                FROM receitas JOIN categorias 
+                ON receitas.id_categoria = categorias.id
+                WHERE receitas.id=$1;`
+        , [id])
         res.send(receita.rows[0])
     } catch (err) {
         res.status(500).send(err.message)
