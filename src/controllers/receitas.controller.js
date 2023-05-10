@@ -1,9 +1,23 @@
+import { db } from "../database/database.connection.js"
+
 export async function getReceitas(req, res) {
-    res.send("getReceitas")
+    try {
+        const receitas = await db.query(`SELECT * FROM receitas;`)
+        console.table(receitas.rows)
+        res.send(receitas.rows)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
 }
 
 export async function getReceitaById(req, res) {
-    res.send("getReceitaById")
+    const { id } = req.params
+    try {
+        const receita = await db.query(`SELECT * FROM receitas WHERE id=$1;`, [id])
+        res.send(receita.rows[0])
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
 }
 
 export async function createReceita(req, res) {
